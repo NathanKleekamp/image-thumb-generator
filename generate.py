@@ -3,7 +3,6 @@
 import os
 import re
 import argparse
-import pprint
 
 from wand.image import Image
 
@@ -27,9 +26,9 @@ args = parser.parse_args()
 
 class ProcessImages(object):
     '''
-    Runs through a given directory looking for filenames that don't end in 
-    "-WidthxHeight.ext" (-1074x483.jpg, for example), resizes to target
-    dimensions, and then crops.
+    Runs through a given directory looking for filenames that don't end in
+    "-WidthxHeight.ext" (-1074x483.jpg, for example), resizes, and then crops
+    to the desired dimensions.
 
     Usage:
     ./generate.py --directory='/path-to-images' --width=500 --height=500 --gravity='center'

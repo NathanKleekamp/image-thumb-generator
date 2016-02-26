@@ -13,6 +13,9 @@ parser.add_argument("-d", "--directory",
     help="Path to input directory. Defaults to current directory")
 parser.add_argument("-o", "--output",
     help="Path to output directory. Defaults to input directory.")
+parser.add_argument("-r", "--recursive",
+    help="Recurse through the file system and process images.",
+    action='store_true')
 parser.add_argument("-w", "--width",
     help="Target width")
 parser.add_argument("-h", "--height",
@@ -205,19 +208,54 @@ class ProcessImages(object):
         self.scale_crop_save_images()
 
 
+def check_gravity(gravity):
+    '''Type check gravity'''
+    gravity_types = ["northwest", "north", "northeast", "west", "center",
+                     "east", "southwest", "south", "southeast"]
+    gravity = gravity.lower()
+
+    if not gravity in gravity_types:
+        raise ValueError
+
+
 def main():
-    if args.directory:
-        input_directory = args.directory
-    else:
-        input_directory = os.curdir
+    try:
+        width = int(args.width)
+    except ValueError as error:
+        print("\n Width must be a number \n")
+        return
 
     try:
-        process_images = ProcessImages(input_directory, int(args.width),
-            int(args.height), gravity=args.gravity)
+        height = int(args.height)
     except ValueError as error:
-        print("Incompatible value:", error)
+        print("\n Height must be a number \n")
+        return
+
+    try:
+        if args.directory:
+            input_directory = args.directory
+        else:
+            input_directory = os.curdir
     except FileNotFoundError as error:
-        print("Cannot find the given directory:", error)
+        print("\n Cannot find the given directory:", error)
+        return
+
+    try:
+        gravity = check_gravity(args.gravity)
+    except ValueError as error:
+        print("Gravity must be northwest, north, northeast, west, center, east,"
+              " southwest, south, southeast", error)
+        return
+
+    if args.recursive:
+        input_directories = []
+        for path, directories, files in os.walk(input_directory):
+            input_directories.append(os.path.abspath(path))
+
+        for input_directory in input_directories:
+            process_images = ProcessImages(input_directory, width, height, gravity=gravity)
+    else:
+        process_images = ProcessImages(input_directory, width, height, gravity=gravity)
 
 
 if __name__ == '__main__':

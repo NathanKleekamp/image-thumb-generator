@@ -39,6 +39,10 @@ class ProcessImages(object):
     def __init__(self, input_directory, target_width, target_height,
             output_directory='', gravity=''):
         self.input_directory = os.path.abspath(input_directory)
+        self.target_width = target_width
+        self.target_height = target_height
+        self.all_images = []
+        self.uncropped = []
 
         if not output_directory:
             self.output_directory = self.input_directory
@@ -50,10 +54,6 @@ class ProcessImages(object):
         else:
             self.gravity = gravity
 
-        self.target_width = target_width
-        self.target_height = target_height
-        self.all_images = []
-        self.uncropped = []
         self.execute();
 
 
@@ -219,32 +219,48 @@ def check_gravity(gravity):
 
 
 def main():
+    '''Do some error checking before getting too far'''
     try:
         width = int(args.width)
     except ValueError as error:
-        print("\n Width must be a number \n")
+        print("Width must be a number \n")
         return
 
     try:
         height = int(args.height)
     except ValueError as error:
-        print("\n Height must be a number \n")
+        print("Height must be a number \n")
         return
 
     try:
         if args.directory:
-            input_directory = args.directory
+            if os.path.isdir(os.path.abspath(args.directory)):
+                input_directory = args.directory
+            else:
+                raise FileNotFoundError
         else:
             input_directory = os.curdir
     except FileNotFoundError as error:
-        print("\n Cannot find the given directory:", error)
+        print("Error: Invalid input directory \n")
+        return
+
+    try:
+        if args.output:
+            if os.path.isdir(os.path.abspath(args.output)):
+                output_directory = args.output
+            else:
+                raise FileNotFoundError
+        else:
+            output_directory = os.curdir
+    except FileNotFoundError as error:
+        print("Error: Invalid output directory \n")
         return
 
     try:
         gravity = check_gravity(args.gravity)
     except ValueError as error:
         print("Gravity must be northwest, north, northeast, west, center, east,"
-              " southwest, south, southeast", error)
+              " southwest, south, southeast \n")
         return
 
     if args.recursive:
@@ -253,9 +269,12 @@ def main():
             input_directories.append(os.path.abspath(path))
 
         for input_directory in input_directories:
-            process_images = ProcessImages(input_directory, width, height, gravity=gravity)
+            process_images = ProcessImages(input_directory, width, height,
+                                           gravity=gravity)
     else:
-        process_images = ProcessImages(input_directory, width, height, gravity=gravity)
+        process_images = ProcessImages(input_directory, width, height,
+                                       gravity=gravity,
+                                       output_directory=output_directory)
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@ import re
 import argparse
 
 from wand.image import Image
+from wand.exceptions import CoderError, CorruptImageError
 
 
 parser = argparse.ArgumentParser(add_help=False)
@@ -180,16 +181,21 @@ class ProcessImages(object):
 
             print("Processing:", img)
 
-            with Image(filename=img) as image:
-                with image.clone() as clone:
-                    scaled = self.scale_image(clone, self.target_width,
-                        self.target_height)
-                    cropped = self.crop_image(scaled, width=self.target_width,
-                        height=self.target_height)
-                    cropped.save(filename='{0}/{1}-{2}x{3}{4}'.format(
-                        self.output_directory, image_name, self.target_width,
-                        self.target_height, image_ext))
-                    cropped.size
+            try:
+                with Image(filename=img) as image:
+                    with image.clone() as clone:
+                        scaled = self.scale_image(clone, self.target_width,
+                            self.target_height)
+                        cropped = self.crop_image(scaled, width=self.target_width,
+                            height=self.target_height)
+                        cropped.save(filename='{0}/{1}-{2}x{3}{4}'.format(
+                            self.output_directory, image_name, self.target_width,
+                            self.target_height, image_ext))
+                        cropped.size
+            except (CoderError, CorruptImageError) as error:
+                print("Error: {0}".format(error))
+            except:
+                print("Unexpected error: {0}".format(sys.exc_info()[0]))
 
 
     def execute(self):

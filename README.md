@@ -1,4 +1,4 @@
-Used for going through a Wordpress uploads directory (non-recursively) and generating thumbnails at a single specific size, instead of regenerating all the thumbs at all the sizes.
+Used for going through a Wordpress uploads directory and generating thumbnails at a single specific size, instead of regenerating all the thumbs at all the sizes.
 
 Runs through a given directory looking for filenames that don't end in  "-WidthxHeight.ext" (-1074x483.jpg, for example), resizes, and then crops to the desired dimensions.
 
@@ -9,8 +9,8 @@ Runs through a given directory looking for filenames that don't end in  "-Widthx
 **Command Line Flags**:
 ```
 "-d", "--directory", "Path to input directory. Defaults to current directory"`
-"-o", "--output", "Path to output directory. Defaults to input directory."`
 "-w", "--width", "Target width"
 "-h", "--height", "Target height"
 "-g", "--gravity", "Crop focus. Options include NorthWest, North, NorthEast, West, Center, East, SouthWest, South, SouthEast"
+"-r", "--recursive", "Recurse through the directory tree"
 ```

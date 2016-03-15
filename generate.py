@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+from __future__ import division
+from __future__ import print_function
 
 import os
 import re
@@ -11,8 +13,6 @@ parser = argparse.ArgumentParser(add_help=False)
 
 parser.add_argument("-d", "--directory",
     help="Path to input directory. Defaults to current directory")
-parser.add_argument("-o", "--output",
-    help="Path to output directory. Defaults to input directory.")
 parser.add_argument("-r", "--recursive",
     help="Recurse through the file system and process images.",
     action='store_true')
@@ -39,21 +39,12 @@ class ProcessImages(object):
     def __init__(self, input_directory, target_width, target_height,
             output_directory='', gravity=''):
         self.input_directory = os.path.abspath(input_directory)
+        self.output_directory = self.input_directory
         self.target_width = target_width
         self.target_height = target_height
+        self.gravity = gravity
         self.all_images = []
         self.uncropped = []
-
-        if not output_directory:
-            self.output_directory = self.input_directory
-        else:
-            self.output_directory = os.path.abspath(output_directory)
-
-        if not gravity:
-            self.gravity = 'center'
-        else:
-            self.gravity = gravity
-
         self.execute();
 
 
@@ -224,11 +215,15 @@ def main():
         width = int(args.width)
     except ValueError as error:
         print("Width must be a number \n")
+    except TypeError as error:
+        print("Width must be a number \n")
         return
 
     try:
         height = int(args.height)
     except ValueError as error:
+        print("Height must be a number \n")
+    except TypeError as error:
         print("Height must be a number \n")
         return
 
@@ -237,27 +232,18 @@ def main():
             if os.path.isdir(os.path.abspath(args.directory)):
                 input_directory = args.directory
             else:
-                raise FileNotFoundError
+                raise IOError
         else:
-            input_directory = os.curdir
-    except FileNotFoundError as error:
-        print("Error: Invalid input directory \n")
+           input_directory = os.curdir
+    except IOError as error:
+        print("IOError: Pass a valid directory. \n")
         return
 
     try:
-        if args.output:
-            if os.path.isdir(os.path.abspath(args.output)):
-                output_directory = args.output
-            else:
-                raise FileNotFoundError
+        if args.gravity:
+            gravity = check_gravity(args.gravity)
         else:
-            output_directory = os.curdir
-    except FileNotFoundError as error:
-        print("Error: Invalid output directory \n")
-        return
-
-    try:
-        gravity = check_gravity(args.gravity)
+            gravity = 'center'
     except ValueError as error:
         print("Gravity must be northwest, north, northeast, west, center, east,"
               " southwest, south, southeast \n")
@@ -273,8 +259,7 @@ def main():
                                            gravity=gravity)
     else:
         process_images = ProcessImages(input_directory, width, height,
-                                       gravity=gravity,
-                                       output_directory=output_directory)
+                                       gravity=gravity)
 
 
 if __name__ == '__main__':

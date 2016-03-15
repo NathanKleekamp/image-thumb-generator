@@ -73,6 +73,7 @@ target/
 
 # Project
 generate-thumbnail
+venv2.7
 test
 *.jpg
 *.png

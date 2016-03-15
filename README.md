@@ -4,7 +4,7 @@ Runs through a given directory looking for filenames that don't end in  "-Widthx
 
 **Usage**:
 
-`./generate.py --directory='/path-to-images' --width=500 --height=500 --gravity='center'`
+`./generate.py --directory='/path/to/images' --width='500' --height='500' --recursive`
 
 **Command Line Flags**:
 ```

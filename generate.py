@@ -73,9 +73,9 @@ class ProcessImages(object):
 
     def remove_previously_processed(self):
         '''
-        Remove all the previously cropped images. Matches everything after the
-        hyphen in the filename. For example, "-300x275.jpg" in this file:
-        "timeline7-300x275.jpg"
+        Remove all the previously cropped images to get the original image.
+        Matches everything after the hyphen in the filename. For example,
+        "-300x275.jpg" in this file: "timeline7-300x275.jpg"
         '''
         pattern = re.compile(
             '([a-zA-Z0-9\.\-\_+])+(-([0-9]+)x([0-9]+)(.jpg|.png|.jpeg|.gif))'

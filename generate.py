@@ -7,7 +7,10 @@ import re
 import argparse
 
 from wand.image import Image
-from wand.exceptions import CoderError, CorruptImageError
+from wand.exceptions import CoderError, CoderFatalError, CorruptImageError, \
+                            CorruptImageFatalError, CorruptImageWarning, \
+                            FileOpenError, FileOpenFatalError, FileOpenWarning,\
+                            ImageError, ImageFatalError, ImageWarning
 
 
 parser = argparse.ArgumentParser(add_help=False)
@@ -192,7 +195,10 @@ class ProcessImages(object):
                             self.output_directory, image_name, self.target_width,
                             self.target_height, image_ext))
                         cropped.size
-            except (CoderError, CorruptImageError) as error:
+            except (CoderError, CoderFatalError, CorruptImageError, \
+                    CorruptImageFatalError, CorruptImageWarning, FileOpenError, \
+                    FileOpenFatalError, FileOpenWarning, ImageError, \
+                    ImageFatalError, ImageWarning) as error:
                 print("Error: {0}".format(error))
             except:
                 print("Unexpected error: {0}".format(sys.exc_info()[0]))
